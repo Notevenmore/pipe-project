@@ -1,0 +1,36 @@
+services: 
+  backend:
+    container_name: backend-pipe
+    image: backend
+    build:
+      context: ./pipe-automitation-backend
+      dockerfile: Dockerfile
+    ports: 
+      - "8000:8000" 
+    networks: 
+      - pipe-network
+  frontend: 
+    container_name: frontend-pipe
+    image: frontend
+    build: 
+      context: ./pipe-automitation-front-end
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - pipe-network
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on: 
+      - backend
+      - frontend
+    networks: 
+      - pipe-network
+networks: 
+  pipe-network:
+    driver: bridge
